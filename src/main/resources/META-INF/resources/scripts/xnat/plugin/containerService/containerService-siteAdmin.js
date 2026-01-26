@@ -2861,14 +2861,15 @@ XNAT.plugin.containerService.assignProjectlauncher = assignProjectlauncher = get
                         if (!disabled && contexts.length > 0) {
                             disabled |= option.contexts.filter(c => contexts.includes(c)).length === 0
                         }
-
-                        formattedOptions.push(spawn('option',{
-                            value: option['wrapper-id'],
-                            data: { contexts: option.contexts.join(' ') },
-                            html: option.label,
-                            disabled: disabled,
-                            selected: wid && wid === option['wrapper-id']
-                        }));
+                         if (!disabled) {
+                            formattedOptions.push(spawn('option',{
+                                value: option['wrapper-id'],
+                                data: { contexts: option.contexts.join(' ') },
+                                html: option.label,
+                                disabled: disabled,
+                                selected: wid && wid === option['wrapper-id']
+                            }));
+                         }
                     });
                     return formattedOptions;
                 }
