@@ -66,8 +66,8 @@ public class KubernetesClientTest {
 
         List<KubernetesToleration> tolerations = Arrays.asList(equalToleration, existsToleration);
 
-        // Convert using the same logic as KubernetesClientImpl.createJob
-        List<V1Toleration> v1Tolerations = convertTolerations(tolerations);
+        // Convert using the extracted static method
+        List<V1Toleration> v1Tolerations = KubernetesClientImpl.convertTolerations(tolerations);
 
         assertThat(v1Tolerations, hasSize(2));
 
@@ -84,25 +84,4 @@ public class KubernetesClientTest {
         assertThat(v1Exists.getEffect(), is(nullValue()));
     }
 
-    /**
-     * Helper that mirrors the toleration conversion logic from KubernetesClientImpl.createJob
-     */
-    private static List<V1Toleration> convertTolerations(List<KubernetesToleration> tolerations) {
-        List<V1Toleration> result = new java.util.ArrayList<>();
-        for (final KubernetesToleration toleration : tolerations) {
-            V1Toleration v1 = new V1Toleration()
-                    .operator(toleration.operator());
-            if (toleration.key() != null && !toleration.key().isEmpty()) {
-                v1.key(toleration.key());
-            }
-            if (toleration.value() != null && !toleration.value().isEmpty()) {
-                v1.value(toleration.value());
-            }
-            if (toleration.effect() != null && !toleration.effect().isEmpty()) {
-                v1.effect(toleration.effect());
-            }
-            result.add(v1);
-        }
-        return result;
-    }
 }

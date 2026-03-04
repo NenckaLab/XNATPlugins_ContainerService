@@ -440,23 +440,7 @@ final Map<String, String> cleanedLabels = labels.entrySet().stream()
                                                 })
                                                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         // Tolerations
-        final List<V1Toleration> v1Tolerations = new ArrayList<>();
-        if (tolerations != null) {
-            for (final DockerServerBase.KubernetesToleration toleration : tolerations) {
-                V1TolerationBuilder tb = new V1TolerationBuilder()
-                        .withOperator(toleration.operator());
-                if (StringUtils.isNotBlank(toleration.key())) {
-                    tb.withKey(toleration.key());
-                }
-                if (StringUtils.isNotBlank(toleration.value())) {
-                    tb.withValue(toleration.value());
-                }
-                if (StringUtils.isNotBlank(toleration.effect())) {
-                    tb.withEffect(toleration.effect());
-                }
-                v1Tolerations.add(tb.build());
-            }
-        }
+        final List<V1Toleration> v1Tolerations = convertTolerations(tolerations);
 
         // Build job
         V1Job job = new V1JobBuilder()
@@ -648,6 +632,28 @@ final Map<String, String> cleanedLabels = labels.entrySet().stream()
         public int hashCode() {
             return Objects.hash(label, operator);
         }
+    }
+
+    @VisibleForTesting
+    public static List<V1Toleration> convertTolerations(final List<DockerServerBase.KubernetesToleration> tolerations) {
+        final List<V1Toleration> v1Tolerations = new ArrayList<>();
+        if (tolerations != null) {
+            for (final DockerServerBase.KubernetesToleration toleration : tolerations) {
+                V1TolerationBuilder tb = new V1TolerationBuilder()
+                        .withOperator(toleration.operator());
+                if (StringUtils.isNotBlank(toleration.key())) {
+                    tb.withKey(toleration.key());
+                }
+                if (StringUtils.isNotBlank(toleration.value())) {
+                    tb.withValue(toleration.value());
+                }
+                if (StringUtils.isNotBlank(toleration.effect())) {
+                    tb.withEffect(toleration.effect());
+                }
+                v1Tolerations.add(tb.build());
+            }
+        }
+        return v1Tolerations;
     }
 
     private static String constraintComparatorToKubernetesOperator(final String comparator) {

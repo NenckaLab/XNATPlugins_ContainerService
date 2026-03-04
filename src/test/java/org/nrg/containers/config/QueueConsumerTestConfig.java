@@ -104,6 +104,11 @@ public class QueueConsumerTestConfig {
     }
 
     @Bean
+    public JmsTemplate jmsTemplate() {
+        return Mockito.mock(JmsTemplate.class);
+    }
+
+    @Bean
     public DockerServiceEventListener serviceEventListener(final EventBus eventBus, final ContainerService containerService, final JmsTemplate template) {
         return new DockerServiceEventListener(eventBus, containerService, template);
     }

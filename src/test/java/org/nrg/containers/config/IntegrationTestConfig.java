@@ -33,6 +33,7 @@ import org.nrg.containers.model.orchestration.entity.OrchestratedWrapperEntity;
 import org.nrg.containers.model.orchestration.entity.OrchestrationEntity;
 import org.nrg.containers.model.orchestration.entity.OrchestrationProjectEntity;
 import org.nrg.containers.model.server.docker.DockerServerEntity;
+import org.nrg.containers.model.server.docker.DockerServerEntityKubernetesToleration;
 import org.nrg.containers.model.server.docker.DockerServerEntitySwarmConstraint;
 import org.nrg.containers.secrets.SecretValueObtainer;
 import org.nrg.containers.secrets.SystemPropertySecretSource;
@@ -330,7 +331,8 @@ public class IntegrationTestConfig {
                 ContainerEntityInput.class,
                 ContainerEntityOutput.class,
                 ContainerEntityMount.class,
-                ContainerMountFilesEntity.class);
+                ContainerMountFilesEntity.class,
+                DockerServerEntityKubernetesToleration.class);
 
         return bean;
     }

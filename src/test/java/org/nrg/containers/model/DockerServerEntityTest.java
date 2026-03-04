@@ -286,9 +286,32 @@ public class DockerServerEntityTest {
                             .collect(Collectors.toList()));
                 }
 
+                // Overwrite toleration IDs (matched by key|operator|effect composite key)
+                List<KubernetesToleration> serverTolerations = server.kubernetesTolerations();
+                List<KubernetesToleration> actualTolerations = actual.kubernetesTolerations();
+                if (actualTolerations != null && serverTolerations != null) {
+                    Map<String, KubernetesToleration> serverTolerationsByKey =
+                            serverTolerations.stream()
+                                    .collect(Collectors.toMap(
+                                            t -> tolerationCompositeKey(t.key(), t.operator(), t.effect()),
+                                            Function.identity()));
+
+                    actualWithSameIdBuilder.kubernetesTolerations(actualTolerations.stream()
+                            .map(t -> {
+                                KubernetesToleration serverToleration = serverTolerationsByKey.get(
+                                        tolerationCompositeKey(t.key(), t.operator(), t.effect()));
+                                return serverToleration == null ? null : t.toBuilder().id(serverToleration.id()).build();
+                            })
+                            .collect(Collectors.toList()));
+                }
+
                 return server.equals(actualWithSameIdBuilder.build());
             }
         };
+    }
+
+    private static String tolerationCompositeKey(String key, String operator, String effect) {
+        return (key == null ? "" : key) + "|" + (operator == null ? "" : operator) + "|" + (effect == null ? "" : effect);
     }
 }
 
