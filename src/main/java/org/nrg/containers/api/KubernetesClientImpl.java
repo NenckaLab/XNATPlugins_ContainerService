@@ -22,6 +22,8 @@ import io.kubernetes.client.openapi.models.V1ResourceRequirements;
 import io.kubernetes.client.openapi.models.V1ResourceRequirementsBuilder;
 import io.kubernetes.client.openapi.models.V1SecurityContext;
 import io.kubernetes.client.openapi.models.V1SecurityContextBuilder;
+import io.kubernetes.client.openapi.models.V1Toleration;
+import io.kubernetes.client.openapi.models.V1TolerationBuilder;
 import io.kubernetes.client.openapi.models.V1Volume;
 import io.kubernetes.client.openapi.models.V1VolumeBuilder;
 import io.kubernetes.client.openapi.models.V1VolumeMount;
@@ -37,6 +39,7 @@ import org.nrg.containers.exceptions.ContainerBackendException;
 import org.nrg.containers.exceptions.ContainerException;
 import org.nrg.containers.exceptions.NoContainerServerException;
 import org.nrg.containers.model.container.auto.Container;
+import org.nrg.containers.model.server.docker.DockerServerBase;
 import org.nrg.containers.secrets.ContainerPropertiesWithSecretValues;
 import org.nrg.containers.utils.KubernetesConfiguration;
 import org.nrg.containers.utils.ShellSplitter;
@@ -244,7 +247,8 @@ public class KubernetesClientImpl implements KubernetesClient {
     }
 
     @Override
-    public String createJob(final Container toCreate, final DockerControlApi.NumReplicas numReplicas, final String serverContainerUser, final String gpuVendor)
+    public String createJob(final Container toCreate, final DockerControlApi.NumReplicas numReplicas, final String serverContainerUser, final String gpuVendor,
+                            final List<DockerServerBase.KubernetesToleration> tolerations)
             throws ContainerBackendException, ContainerException {
         log.debug("Creating kubernetes job");
 
@@ -435,6 +439,25 @@ final Map<String, String> cleanedLabels = labels.entrySet().stream()
                                                     }
                                                 })
                                                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        // Tolerations
+        final List<V1Toleration> v1Tolerations = new ArrayList<>();
+        if (tolerations != null) {
+            for (final DockerServerBase.KubernetesToleration toleration : tolerations) {
+                V1TolerationBuilder tb = new V1TolerationBuilder()
+                        .withOperator(toleration.operator());
+                if (StringUtils.isNotBlank(toleration.key())) {
+                    tb.withKey(toleration.key());
+                }
+                if (StringUtils.isNotBlank(toleration.value())) {
+                    tb.withValue(toleration.value());
+                }
+                if (StringUtils.isNotBlank(toleration.effect())) {
+                    tb.withEffect(toleration.effect());
+                }
+                v1Tolerations.add(tb.build());
+            }
+        }
+
         // Build job
         V1Job job = new V1JobBuilder()
                 .withNewMetadata()
@@ -451,6 +474,7 @@ final Map<String, String> cleanedLabels = labels.entrySet().stream()
                 .endMetadata()
                 .withNewSpec()
                 .withAffinity(affinity)
+                .withTolerations(v1Tolerations.isEmpty() ? null : v1Tolerations)
                 .withRestartPolicy(POD_RESTART_POLICY)
                 .withVolumes(volumes)
                 .addNewContainer()
