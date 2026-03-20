@@ -259,9 +259,9 @@ public class SecretsTest {
                 .thenAnswer((Answer<V1Job>) invocation -> invocation.getArgumentAt(1, V1Job.class));
 
         // Call method under test
-        Mockito.when(kubernetesClient.createJob(toCreate, DockerControlApi.NumReplicas.ZERO, null, null))
+        Mockito.when(kubernetesClient.createJob(toCreate, DockerControlApi.NumReplicas.ZERO, null, null, null))
                 .thenCallRealMethod();
-        kubernetesClient.createJob(toCreate, DockerControlApi.NumReplicas.ZERO, null, null);
+        kubernetesClient.createJob(toCreate, DockerControlApi.NumReplicas.ZERO, null, null, null);
 
         // Capture call to backend api mock
         final ArgumentCaptor<V1Job> jobArgumentCaptor = ArgumentCaptor.forClass(V1Job.class);
