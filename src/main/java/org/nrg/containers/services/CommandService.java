@@ -34,6 +34,7 @@ public interface CommandService {
     CommandWrapper addWrapper(Command command, CommandWrapper commandWrapper) throws CommandValidationException, NotFoundException;
     CommandWrapper retrieveWrapper(long wrapperId);
     CommandWrapper retrieveWrapper(long commandId, String wrapperName);
+    boolean wrapperExists(long wrapperId);
     CommandWrapper getWrapper(long wrapperId) throws NotFoundException;
     CommandWrapper getWrapper(long commandId, String wrapperName) throws NotFoundException;
     CommandWrapper updateWrapper(long commandId, CommandWrapper updates) throws CommandValidationException, NotFoundException;
