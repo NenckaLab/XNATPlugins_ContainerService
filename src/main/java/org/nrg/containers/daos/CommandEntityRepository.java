@@ -138,6 +138,13 @@ public class CommandEntityRepository extends AbstractHibernateDAO<CommandEntity>
                 .uniqueResult() != null;
     }
 
+    public boolean wrapperExists(final long wrapperId) {
+        return getSession().createQuery("select 1 from CommandWrapperEntity as wrapper where wrapper.id = :wrapperId")
+                .setLong("wrapperId", wrapperId)
+                .setFlushMode(FlushMode.MANUAL)
+                .uniqueResult() != null;
+    }
+
     public CommandWrapperEntity retrieveWrapper(long commandId, String wrapperName) {
         if (!commandExists(commandId)) {
             return null;

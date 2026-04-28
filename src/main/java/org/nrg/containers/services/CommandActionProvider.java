@@ -474,18 +474,18 @@ public class CommandActionProvider extends MultiActionProvider {
 
     @Override
     public Boolean isActionAvailable(final String actionKey, final String projectId, final UserI user) {
-        for (Command command : commandService.getAll()) {
-            for (Command.CommandWrapper wrapper : command.xnatCommandWrappers()) {
-                if (Long.toString(wrapper.id()).contentEquals(actionKeyToActionId(actionKey))) {
-                    if ((Strings.isNullOrEmpty(projectId) && containerConfigService.isEnabledForSite(wrapper.id())) ||
-                            (!Strings.isNullOrEmpty(projectId) && containerConfigService.isEnabledForProject(projectId, wrapper.id()))) {
-                        return true;
-                    }
-                }
-            }
+        final long wrapperId;
+        try {
+            wrapperId = Long.parseLong(actionKeyToActionId(actionKey));
+        } catch (NumberFormatException e) {
+            return false;
         }
-
-        return false;
+        if (!commandService.wrapperExists(wrapperId)) {
+            return false;
+        }
+        return Strings.isNullOrEmpty(projectId)
+                ? containerConfigService.isEnabledForSite(wrapperId)
+                : containerConfigService.isEnabledForProject(projectId, wrapperId);
     }
 
     ActionAttributeConfiguration CommandInputConfig2ActionAttributeConfig(CommandConfiguration.CommandInputConfiguration commandInputConfiguration) {

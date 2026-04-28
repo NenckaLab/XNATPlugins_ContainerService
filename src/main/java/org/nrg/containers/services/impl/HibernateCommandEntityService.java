@@ -149,6 +149,11 @@ public class HibernateCommandEntityService extends AbstractHibernateEntityServic
     }
 
     @Override
+    public boolean wrapperExists(final long wrapperId) {
+        return getDao().wrapperExists(wrapperId);
+    }
+
+    @Override
     public CommandEntity getCommandByWrapperId(final long wrapperId) throws NotFoundException {
         return getDao().getCommandByWrapperId(wrapperId);
     }

@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.8.1
+
+### Bugfixes
+* [CS-1055](https://radiologics.atlassian.net/browse/CS-1055)/[XNAT-8741](https://radiologics.atlassian.net/browse/XNAT-8741): Use a much more efficient means of checking if event service command action is available
+
 ## 3.8.0
 [Released](https://bitbucket.org/xnatdev/container-service/src/3.8.0/)
 
