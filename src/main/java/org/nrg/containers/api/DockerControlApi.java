@@ -1011,6 +1011,12 @@ public class DockerControlApi implements ContainerControlApi {
         final DockerServer server = getServer();
         if (!server.autoCleanup()) {
             log.debug("Server is set to autoCleanup=false. Skipping remove.");
+        } else if (server.backend() == Backend.KUBERNETES) {
+            if ("0".equals(container.exitCode())) {
+                getKubernetesClient().removeJob(container.jobName());
+            } else {
+                log.debug("Kubernetes job {} left in cluster (failed or unknown exit); not calling removeJob.", container.jobName());
+            }
         } else {
             remove(container, server);
         }

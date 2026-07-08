@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.8.1_MCWCIR
+
+MCW/CIR fork based on upstream [Container Service 3.8.1](https://bitbucket.org/xnatdev/container-service/src/3.8.1/). All upstream 3.8.1 and 3.8.0 changes apply, including [CS-1053](https://radiologics.atlassian.net/browse/CS-1053) Kubernetes tolerations ([3.8.0 release notes](https://bitbucket.org/xnatdev/container-service/src/3.8.0/)). This fork uses the upstream toleration implementation (`kubernetes-tolerations` API, server-side validation, admin UI, and tests); the prior MCW-local toleration patch has been removed.
+
+### MCW-specific changes (on top of 3.8.1)
+* **Kubernetes host path**: Use translated `containerHostPath()` when building Kubernetes `hostPath` volumes, matching Docker/Swarm path translation behavior
+* **Kubernetes auto-cleanup**: When auto-cleanup is enabled, only remove successful Kubernetes jobs (`exitCode == 0`); leave failed jobs in the cluster for diagnosis
+* **Workflow failure diagnostics**: Include root-cause text in workflow failure details; catch `ContainerBackendException` during container launch
+* **UI cleanup**: Removed legacy `project_bundle_tabs.vm` (referenced deleted `csTabManager.js`); deduplicated `selectableTableBehavior.js` include in project `Injector.vm`
+
 ## 3.8.1
 
 ### Bugfixes

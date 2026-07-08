@@ -320,7 +320,7 @@ public class KubernetesClientImpl implements KubernetesClient {
                     volumes.add(new V1VolumeBuilder()
                                         .withName(mount.name())
                                         .withNewHostPath()
-                                        .withPath(mount.xnatHostPath())
+                                        .withPath(mount.containerHostPath())
                                         .endHostPath()
                                         .build());
                     mounts.add(new V1VolumeMountBuilder()

@@ -607,9 +607,9 @@ public class ContainerServiceImpl implements ContainerService {
         } catch (NotFoundException  | UnauthorizedException e) {
             handleFailure(workflow, e, "");
             log.error("Container command resolution failed for workflow ID {}.", workflowid, e);
-        } catch (NoDockerServerException | DockerServerException | ContainerException | UnsupportedOperationException e) {
+        } catch (NoDockerServerException | ContainerBackendException | ContainerException | UnsupportedOperationException e) {
             handleFailure(workflow, e, "Container launch");
-            log.error("Container launch failed for workflow ID {}.", workflowid, e);
+            log.error("Container launch failed for workflow ID {}: {}", workflowid, e.getMessage(), e);
         } catch (Exception e) {
             handleFailure(workflow, e, "Staging");
             log.error("consumeResolveCommandAndLaunchContainer failed for workflow ID {}.", workflowid, e);
@@ -1798,11 +1798,15 @@ public class ContainerServiceImpl implements ContainerService {
         if (workflow == null) return;
 
         String exceptionName = (source != null)
-                ? source.getClass().getName().replace("Exception$", "")
+                ? source.getClass().getSimpleName()
                 : "";
         String message = (source != null)
                 ? StringUtils.defaultIfBlank(source.getMessage(), exceptionName)
                 : "";
+        if (source != null && source.getCause() != null && StringUtils.isNotBlank(source.getCause().getMessage())
+                && !message.contains(source.getCause().getMessage())) {
+            message = message + ": " + source.getCause().getMessage();
+        }
         String suffix = StringUtils.defaultIfBlank(statusSuffix, exceptionName);
         String formattedSuffix = StringUtils.isNotBlank(suffix) ? " (" + suffix + ")" : "";
         String status = PersistentWorkflowUtils.FAILED + formattedSuffix;
