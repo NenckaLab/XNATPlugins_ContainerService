@@ -190,6 +190,11 @@ public class CommandServiceImpl implements CommandService {
     }
 
     @Override
+    public boolean wrapperExists(final long wrapperId) {
+        return commandEntityService.wrapperExists(wrapperId);
+    }
+
+    @Override
     @Nonnull
     public CommandWrapper getWrapper(final long wrapperId) throws NotFoundException {
         return toPojo(commandEntityService.getWrapper(wrapperId));

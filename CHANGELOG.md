@@ -1,5 +1,31 @@
 # Changelog
 
+## 3.8.1_MCWCIR
+
+MCW/CIR fork based on upstream [Container Service 3.8.1](https://bitbucket.org/xnatdev/container-service/src/3.8.1/). All upstream 3.8.1 and 3.8.0 changes apply, including [CS-1053](https://radiologics.atlassian.net/browse/CS-1053) Kubernetes tolerations ([3.8.0 release notes](https://bitbucket.org/xnatdev/container-service/src/3.8.0/)). This fork uses the upstream toleration implementation (`kubernetes-tolerations` API, server-side validation, admin UI, and tests); the prior MCW-local toleration patch has been removed.
+
+### MCW-specific changes (on top of 3.8.1)
+* **Kubernetes host path**: Use translated `containerHostPath()` when building Kubernetes `hostPath` volumes, matching Docker/Swarm path translation behavior
+* **Kubernetes auto-cleanup**: When auto-cleanup is enabled, only remove successful Kubernetes jobs (`exitCode == 0`); leave failed jobs in the cluster for diagnosis
+* **Workflow failure diagnostics**: Include root-cause text in workflow failure details; catch `ContainerBackendException` during container launch
+* **UI cleanup**: Removed legacy `project_bundle_tabs.vm` (referenced deleted `csTabManager.js`); deduplicated `selectableTableBehavior.js` include in project `Injector.vm`
+
+## 3.8.1
+
+### Bugfixes
+* [CS-1055](https://radiologics.atlassian.net/browse/CS-1055)/[XNAT-8741](https://radiologics.atlassian.net/browse/XNAT-8741): Use a much more efficient means of checking if event service command action is available
+
+## 3.8.0
+[Released](https://bitbucket.org/xnatdev/container-service/src/3.8.0/)
+
+### Bugfixes
+* [CS-999](https://radiologics.atlassian.net/browse/CS-999): Added filtering to display logic to hide disabled commands
+* [CS-1042](https://radiologics.atlassian.net/browse/CS-1042): Added support for extended permissions for project members
+* [CS-1044](https://radiologics.atlassian.net/browse/CS-1044): Added sorting by label for containers listed in Actions boxes
+* [CS-1047](https://radiologics.atlassian.net/browse/CS-1047): Converted some event handlers to use JMS directly
+* [CS-1049](https://radiologics.atlassian.net/browse/CS-1049): Fixed occasional null pointer exception
+* [CS-1053](https://radiologics.atlassian.net/browse/CS-1053): Added support for Kubernetes tolerations
+
 ## 3.7.3
 [Released](https://bitbucket.org/xnatdev/container-service/src/3.7.3/)
 
